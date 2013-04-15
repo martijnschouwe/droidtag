@@ -1,4 +1,8 @@
-package org.droidtag;
+package org.droidtag.activities;
+
+import org.droidtag.R;
+import org.droidtag.R.layout;
+import org.droidtag.R.menu;
 
 import android.os.Bundle;
 import android.app.Activity;

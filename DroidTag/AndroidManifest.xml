@@ -23,7 +23,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="org.droidtag.Gamestart"
+            android:name="org.droidtag.activities.Gamestart"
             android:label="@string/title_activity_gamestart" >
         </activity>
     </application>
