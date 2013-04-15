@@ -33,7 +33,6 @@ import ioio.lib.api.DigitalOutput;
 import ioio.lib.api.SpiMaster;
 import ioio.lib.api.TwiMaster.Rate;
 import ioio.lib.api.Uart;
-import ioio.lib.spi.Log;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -43,6 +42,8 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+
+import android.util.Log;
 
 class IOIOProtocol {
 	static final int HARD_RESET                          = 0x00;
@@ -92,6 +93,7 @@ class IOIOProtocol {
 	static final int SET_PIN_INCAP                       = 0x1C;
 	static final int INCAP_REPORT                        = 0x1C;
 	static final int SOFT_CLOSE                          = 0x1D;
+	static final int IR_CODE                             = 0x1F;
 
 	static final int[] SCALE_DIV = new int[] {
 		0x1F,  // 31.25
@@ -857,5 +859,28 @@ class IOIOProtocol {
 		out_ = out;
 		handler_ = handler;
 		thread_.start();
+	}
+	
+synchronized public void irTransmit(int freqHz, int bursts[][]) throws IOException {
+		
+		int size = bursts.length;
+		for (int i = 0; i < Math.ceil(size / 4); i++) {
+			beginBatch();
+			
+			// header
+			writeByte(IR_CODE);
+			writeTwoBytes(freqHz);
+			int sentBursts = (i+1)*4 < size ? 4 : (size - i*4); // number of bursts that will be sent in this message
+			int partial = (i+1)*4 < size ? 1 : 0;
+			writeByte((sentBursts << 1) + partial);
+			
+			// data
+			for (int j = 0; j < 4 && (i*4 + j) < size; j++) {
+				writeTwoBytes(bursts[i*4 + j][0]);
+				writeTwoBytes(bursts[i*4 + j][1]);
+			}
+			
+			endBatch();
+		}
 	}
 }

@@ -3,8 +3,8 @@ package ioio.lib.impl;
 import ioio.lib.api.IrTransmitter;
 import ioio.lib.api.PwmOutput;
 import ioio.lib.api.exception.ConnectionLostException;
-
 import java.io.IOException;
+
 
 public class IrTransmitterImpl extends AbstractResource implements
 		IrTransmitter {

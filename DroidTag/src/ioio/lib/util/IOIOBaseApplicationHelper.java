@@ -5,9 +5,9 @@ import ioio.lib.api.IOIOFactory;
 import ioio.lib.api.exception.ConnectionLostException;
 import ioio.lib.api.exception.IncompatibilityException;
 import ioio.lib.spi.IOIOConnectionFactory;
-import ioio.lib.spi.Log;
 import ioio.lib.util.IOIOConnectionManager.IOIOConnectionThreadProvider;
 import ioio.lib.util.IOIOConnectionManager.Thread;
+import android.util.Log;
 
 public abstract class IOIOBaseApplicationHelper implements IOIOConnectionThreadProvider {
 	private static final String TAG = "IOIOBaseApplicationHelper";
