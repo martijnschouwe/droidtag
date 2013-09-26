@@ -1,0 +1,27 @@
+# Example makefile for open source PIC toolchain
+# Specific microcontroller type:
+DEVICE=PIC24FJ128DA206
+# C compiler, assembler, device programmer:
+CC=sdcc -mpic24
+AS=gpasm -p$(DEVICE)
+PK2=pk2cmd -P$(DEVICE)
+
+all: main.hex
+
+main.hex: main.c
+	$(CC) main.c
+
+write:
+	$(PK2) -M -Fmain.hex
+
+on:
+	$(PK2) -T
+
+off:
+	$(PK2) -W
+
+erase:
+	$(PK2) -E
+
+clean:
+	rm -f *.o *.cod *.hex *.lst *.err
