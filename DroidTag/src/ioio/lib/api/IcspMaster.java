@@ -33,13 +33,13 @@ import ioio.lib.api.exception.ConnectionLostException;
 /**
  * An interface for controlling an ICSP channel, enabling Flash programming of
  * an external PIC MCU, and in particular, another IOIO board.
- * <p>
+ * <p/>
  * ICSP (In-Circuit Serial Programming) is a protocol intended for programming
  * of PIC MCUs. It is a serial protocol over three wires: PGC (clock), PGD
  * (data) and MCLR (reset), where PGC and MCLR are controlled by the master and
  * PGD is shared by the master and slave, depending on the transaction state.
  * IcspMaster instances are obtained by calling {@link IOIO#openIcspMaster()}.
- * <p>
+ * <p/>
  * This interface is very low level: it allows direct access to the atomic
  * operations of the ICSP protocol:
  * <ul>
@@ -50,23 +50,23 @@ import ioio.lib.api.exception.ConnectionLostException;
  * <li>Reading the value of the VISI register of the slave MCU into a read queue
  * ({@link #readVisi()}).</li>
  * </ul>
- * <p>
+ * <p/>
  * The ICSP module uses fixed pins for its lines. See the user guide for details
  * for your specific board. ICSP is a special feature, introduced for the
  * purpose of programming a IOIO board with another IOIO board. It does not
  * necessarily play nicely when used concurrently with other features, in the
  * sense that it may introduce latencies in other modules. It is thus
  * recommended not to use ICSP in conjunction with latency-sensitive features.
- * <p>
+ * <p/>
  * The instance is alive since its creation. If the connection with the IOIO
  * drops at any point, the instance transitions to a disconnected state, in
  * which every attempt to use it (except {@link #close()}) will throw a
  * {@link ConnectionLostException}. Whenever {@link #close()} is invoked the
  * instance may no longer be used. Any resources associated with it are freed
  * and can be reused.
- * <p>
+ * <p/>
  * Typical usage:
- * 
+ * <p/>
  * <pre>
  * {@code
  * IcspMaster icsp = ioio.openIcspMaster();
@@ -79,67 +79,59 @@ import ioio.lib.api.exception.ConnectionLostException;
  * icsp.exitProgramming();
  * icsp.close();                       // free ICSP module and pins
  * }</pre>
- * 
+ *
  * @see IOIO#openIcspMaster()
  */
 public interface IcspMaster extends Closeable {
-	/**
-	 * Initiate a sequence that will put the slave device in programming mode.
-	 * This sequence is necessary for executing instructions and reading
-	 * register values.
-	 * 
-	 * @throws ConnectionLostException
-	 *             Connection to the IOIO has been lost.
-	 */
-	public void enterProgramming() throws ConnectionLostException;
+    /**
+     * Initiate a sequence that will put the slave device in programming mode.
+     * This sequence is necessary for executing instructions and reading
+     * register values.
+     *
+     * @throws ConnectionLostException Connection to the IOIO has been lost.
+     */
+    public void enterProgramming() throws ConnectionLostException;
 
-	/**
-	 * Initiate a sequence that will put the slave device out of programming
-	 * mode. It will be held in reset.
-	 * 
-	 * @throws ConnectionLostException
-	 *             Connection to the IOIO has been lost.
-	 */
-	public void exitProgramming() throws ConnectionLostException;
+    /**
+     * Initiate a sequence that will put the slave device out of programming
+     * mode. It will be held in reset.
+     *
+     * @throws ConnectionLostException Connection to the IOIO has been lost.
+     */
+    public void exitProgramming() throws ConnectionLostException;
 
-	/**
-	 * Execute a single instruction on the slave MCU.
-	 * 
-	 * @param instruction
-	 *            a 24-bit PIC instruction.
-	 * @throws ConnectionLostException
-	 *             Connection to the IOIO has been lost.
-	 */
-	public void executeInstruction(int instruction)
-			throws ConnectionLostException;
+    /**
+     * Execute a single instruction on the slave MCU.
+     *
+     * @param instruction a 24-bit PIC instruction.
+     * @throws ConnectionLostException Connection to the IOIO has been lost.
+     */
+    public void executeInstruction(int instruction)
+            throws ConnectionLostException;
 
-	/**
-	 * Request a read of the VISI register on the slave MCU. This is an
-	 * asynchronous call, in which the 16-bit result is obtained by
-	 * {@link #waitVisiResult()}.
-	 * This method may block if the read queue on the IOIO is full, but this
-	 * should be for short periods only.
-	 * 
-	 * @throws ConnectionLostException
-	 *             Connection to the IOIO has been lost.
-	 * @throws InterruptedException
-	 *             Interrupted while blocking.
-	 */
-	public void readVisi() throws ConnectionLostException, InterruptedException;
+    /**
+     * Request a read of the VISI register on the slave MCU. This is an
+     * asynchronous call, in which the 16-bit result is obtained by
+     * {@link #waitVisiResult()}.
+     * This method may block if the read queue on the IOIO is full, but this
+     * should be for short periods only.
+     *
+     * @throws ConnectionLostException Connection to the IOIO has been lost.
+     * @throws InterruptedException    Interrupted while blocking.
+     */
+    public void readVisi() throws ConnectionLostException, InterruptedException;
 
-	/**
-	 * Wait and return a result of a call to {@link #readVisi()}.
-	 * Results will be returned in the same order as requested.
-	 * 
-	 * The call will block until there is data, until interrupted, or until
-	 * connection to the IOIO has been lost.
-	 * 
-	 * @return The result - an unsigned 16-bit number.
-	 * @throws ConnectionLostException
-	 *             Connection to the IOIO has been lost.
-	 * @throws InterruptedException
-	 *             Interrupted while blocking.
-	 */
-	public int waitVisiResult() throws ConnectionLostException,
-			InterruptedException;
+    /**
+     * Wait and return a result of a call to {@link #readVisi()}.
+     * Results will be returned in the same order as requested.
+     * <p/>
+     * The call will block until there is data, until interrupted, or until
+     * connection to the IOIO has been lost.
+     *
+     * @return The result - an unsigned 16-bit number.
+     * @throws ConnectionLostException Connection to the IOIO has been lost.
+     * @throws InterruptedException    Interrupted while blocking.
+     */
+    public int waitVisiResult() throws ConnectionLostException,
+            InterruptedException;
 }

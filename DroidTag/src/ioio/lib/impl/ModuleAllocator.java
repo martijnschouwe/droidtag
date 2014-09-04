@@ -28,14 +28,14 @@
  */
 package ioio.lib.impl;
 
-import ioio.lib.api.exception.OutOfResourceException;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
+
+import ioio.lib.api.exception.OutOfResourceException;
 
 /**
  * Utility to allocate and assign unique module ids.
@@ -47,7 +47,7 @@ import java.util.TreeSet;
 class ModuleAllocator {
     private final Set<Integer> availableModuleIds_;
     private final Set<Integer> allocatedModuleIds_;
-	private final String name_;
+    private final String name_;
 
     public ModuleAllocator(Collection<Integer> availableModuleIds, String name) {
         this.availableModuleIds_ = new TreeSet<Integer>(availableModuleIds);
@@ -56,7 +56,7 @@ class ModuleAllocator {
     }
 
     public ModuleAllocator(int[] availableModuleIds, String name) {
-    	this(getList(availableModuleIds), name);
+        this(getList(availableModuleIds), name);
     }
 
     public ModuleAllocator(int maxModules, String name) {
@@ -84,7 +84,7 @@ class ModuleAllocator {
      */
     public synchronized Integer allocateModule() {
         if (availableModuleIds_.isEmpty()) {
-        	throw new OutOfResourceException("No more resources of the requested type: " + name_);
+            throw new OutOfResourceException("No more resources of the requested type: " + name_);
         }
         Integer moduleId = availableModuleIds_.iterator().next();
         availableModuleIds_.remove(moduleId);
@@ -94,11 +94,11 @@ class ModuleAllocator {
 
     /**
      * @param moduleId the moduleId to be released; throws {@link IllegalArgumentException} if
-     *     a moduleId is re-returned, or an invalid moduleId is provided
+     *                 a moduleId is re-returned, or an invalid moduleId is provided
      */
     public synchronized void releaseModule(int moduleId) {
         if (!allocatedModuleIds_.contains(moduleId)) {
-            throw new IllegalArgumentException("moduleId: " + moduleId+ "; not yet allocated");
+            throw new IllegalArgumentException("moduleId: " + moduleId + "; not yet allocated");
         }
         availableModuleIds_.add(moduleId);
         allocatedModuleIds_.remove(moduleId);

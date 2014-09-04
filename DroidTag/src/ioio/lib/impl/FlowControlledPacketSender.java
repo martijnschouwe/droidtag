@@ -33,86 +33,86 @@ import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 
 class FlowControlledPacketSender {
-	interface Packet {
-		int getSize();
-	}
+    interface Packet {
+        int getSize();
+    }
 
-	interface Sender {
-		void send(Packet packet);
-	}
+    interface Sender {
+        void send(Packet packet);
+    }
 
-	private final Sender sender_;
-	private final BlockingQueue<Packet> queue_ = new ArrayBlockingQueue<Packet>(
-			Constants.PACKET_BUFFER_SIZE);
-	private final FlushThread thread_ = new FlushThread();
+    private final Sender sender_;
+    private final BlockingQueue<Packet> queue_ = new ArrayBlockingQueue<Packet>(
+            Constants.PACKET_BUFFER_SIZE);
+    private final FlushThread thread_ = new FlushThread();
 
-	private int readyToSend_ = 0;
-	private boolean closed_ = false;
+    private int readyToSend_ = 0;
+    private boolean closed_ = false;
 
-	public FlowControlledPacketSender(Sender sender) {
-		sender_ = sender;
-		thread_.start();
-	}
+    public FlowControlledPacketSender(Sender sender) {
+        sender_ = sender;
+        thread_.start();
+    }
 
-	synchronized public void flush() throws IOException {
-		try {
-			while (!closed_ && !queue_.isEmpty()) {
-				wait();
-			}
-		} catch (InterruptedException e) {
-			throw new IOException("Interrupted");
-		}
-		if (closed_) {
-			throw new IllegalStateException("Stream has been closed");
-		}
-	}
+    synchronized public void flush() throws IOException {
+        try {
+            while (!closed_ && !queue_.isEmpty()) {
+                wait();
+            }
+        } catch (InterruptedException e) {
+            throw new IOException("Interrupted");
+        }
+        if (closed_) {
+            throw new IllegalStateException("Stream has been closed");
+        }
+    }
 
-	synchronized public void write(Packet packet) throws IOException {
-		try {
-			while (!closed_ && !queue_.offer(packet)) {
-				wait();
-			}
-		} catch (InterruptedException e) {
-			throw new IOException("Interrupted");
-		}
-		if (closed_) {
-			throw new IllegalStateException("Stream has been closed");
-		}
-		notifyAll();
-	}
+    synchronized public void write(Packet packet) throws IOException {
+        try {
+            while (!closed_ && !queue_.offer(packet)) {
+                wait();
+            }
+        } catch (InterruptedException e) {
+            throw new IOException("Interrupted");
+        }
+        if (closed_) {
+            throw new IllegalStateException("Stream has been closed");
+        }
+        notifyAll();
+    }
 
-	synchronized public void readyToSend(int numBytes) {
-		readyToSend_ += numBytes;
-		notifyAll();
-	}
+    synchronized public void readyToSend(int numBytes) {
+        readyToSend_ += numBytes;
+        notifyAll();
+    }
 
-	synchronized public void close() {
-		closed_ = true;
-		thread_.interrupt();
-	}
+    synchronized public void close() {
+        closed_ = true;
+        thread_.interrupt();
+    }
 
-	synchronized public void kill() {
-		thread_.interrupt();
-	}
+    synchronized public void kill() {
+        thread_.interrupt();
+    }
 
-	class FlushThread extends Thread {
-		@Override
-		public void run() {
-			super.run();
-			try {
-				while (true) {
-					synchronized (FlowControlledPacketSender.this) {
-						while (queue_.isEmpty()
-								|| readyToSend_ < queue_.peek().getSize()) {
-							FlowControlledPacketSender.this.wait();
-						}
-						FlowControlledPacketSender.this.notifyAll();
-						readyToSend_ -= queue_.peek().getSize();
-					}
-					sender_.send(queue_.remove());
-				}
-			} catch (InterruptedException e) {
-			}
-		}
-	}
+    class FlushThread extends Thread {
+        @Override
+        public void run() {
+            super.run();
+            try {
+                while (true) {
+                    synchronized (FlowControlledPacketSender.this) {
+                        while (queue_.isEmpty()
+                                || readyToSend_ < queue_.peek().getSize()) {
+                            FlowControlledPacketSender.this.wait();
+                        }
+                        FlowControlledPacketSender.this.notifyAll();
+                        readyToSend_ -= queue_.peek().getSize();
+                    }
+                    sender_.send(queue_.remove());
+                }
+            } catch (InterruptedException e) {
+            }
+        }
+    }
 }

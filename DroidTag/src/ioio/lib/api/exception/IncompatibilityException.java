@@ -30,12 +30,12 @@ package ioio.lib.api.exception;
 
 /**
  * Thrown when an incompatibility of system components is detected, such as when
- * an unsupported board hardware or software version is encountered. 
+ * an unsupported board hardware or software version is encountered.
  */
 public class IncompatibilityException extends Exception {
-	private static final long serialVersionUID = -613939818063932627L;
+    private static final long serialVersionUID = -613939818063932627L;
 
-	public IncompatibilityException(String msg) {
-		super(msg);
-	}
+    public IncompatibilityException(String msg) {
+        super(msg);
+    }
 }

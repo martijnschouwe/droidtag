@@ -32,22 +32,22 @@ import ioio.lib.api.exception.ConnectionLostException;
 
 /**
  * A pin used for digital output.
- * <p>
+ * <p/>
  * A digital input pin can be used to generate logic-level signals.
  * DigitalOutput instances are obtained by calling
  * {@link IOIO#openDigitalOutput(DigitalOutput.Spec, boolean)}.
- * <p>
+ * <p/>
  * The value of the pin is set by calling {@link #write(boolean)}.
- * <p>
+ * <p/>
  * The instance is alive since its creation. If the connection with the IOIO
  * drops at any point, the instance transitions to a disconnected state, in
  * which every attempt to use the pin (except {@link #close()}) will throw a
  * {@link ConnectionLostException}. Whenever {@link #close()} is invoked the
  * instance may no longer be used. Any resources associated with it are freed
  * and can be reused.
- * <p>
+ * <p/>
  * Typical usage:
- * 
+ * <p/>
  * <pre>
  * DigitalOutput led = ioio.openDigitalInput(2);  // LED anode on pin 2.
  * led.write(true);  // turn LED on.
@@ -56,65 +56,67 @@ import ioio.lib.api.exception.ConnectionLostException;
  * </pre>
  */
 public interface DigitalOutput extends Closeable {
-	/**
-	 * A digital output pin specification, used when opening digital outputs.
-	 */
-	public static class Spec {
-		/** Output pin mode. */
-		public enum Mode {
-			/**
-			 * Pin operates in push-pull mode, i.e. a logical "HIGH" is
-			 * represented by a voltage of Vdd on the pin and a logical "LOW" by
-			 * a voltage of 0 (ground).
-			 */
-			NORMAL,
-			/**
-			 * Pin operates in open-drain mode, i.e. a logical "HIGH" is
-			 * represented by a high impedance on the pin (as if it is
-			 * disconnected) and a logical "LOW" by a voltage of 0 (ground).
-			 * This mode is most commonly used for generating 5V logical signal
-			 * on a 3.3V pin: 5V tolerant pins must be used; a pull-up resistor
-			 * is connected between the pin and 5V, and the pin is used in open-
-			 * drain mode.
-			 */
-			OPEN_DRAIN,
-		}
+    /**
+     * A digital output pin specification, used when opening digital outputs.
+     */
+    public static class Spec {
+        /**
+         * Output pin mode.
+         */
+        public enum Mode {
+            /**
+             * Pin operates in push-pull mode, i.e. a logical "HIGH" is
+             * represented by a voltage of Vdd on the pin and a logical "LOW" by
+             * a voltage of 0 (ground).
+             */
+            NORMAL,
+            /**
+             * Pin operates in open-drain mode, i.e. a logical "HIGH" is
+             * represented by a high impedance on the pin (as if it is
+             * disconnected) and a logical "LOW" by a voltage of 0 (ground).
+             * This mode is most commonly used for generating 5V logical signal
+             * on a 3.3V pin: 5V tolerant pins must be used; a pull-up resistor
+             * is connected between the pin and 5V, and the pin is used in open-
+             * drain mode.
+             */
+            OPEN_DRAIN,
+        }
 
-		/** The pin number, as labeled on the board. */
-		public int pin;
-		/** The pin mode. */
-		public Mode mode;
+        /**
+         * The pin number, as labeled on the board.
+         */
+        public int pin;
+        /**
+         * The pin mode.
+         */
+        public Mode mode;
 
-		/**
-		 * Constructor.
-		 * 
-		 * @param pin
-		 *            Pin number, as labeled on the board.
-		 * @param mode
-		 *            Pin mode.
-		 */
-		public Spec(int pin, Mode mode) {
-			this.pin = pin;
-			this.mode = mode;
-		}
+        /**
+         * Constructor.
+         *
+         * @param pin  Pin number, as labeled on the board.
+         * @param mode Pin mode.
+         */
+        public Spec(int pin, Mode mode) {
+            this.pin = pin;
+            this.mode = mode;
+        }
 
-		/**
-		 * Shorthand for Spec(pin, Mode.NORMAL).
-		 * 
-		 * @see DigitalOutput.Spec#Spec(int, DigitalOutput.Spec.Mode)
-		 */
-		public Spec(int pin) {
-			this(pin, Mode.NORMAL);
-		}
-	}
+        /**
+         * Shorthand for Spec(pin, Mode.NORMAL).
+         *
+         * @see DigitalOutput.Spec#Spec(int, DigitalOutput.Spec.Mode)
+         */
+        public Spec(int pin) {
+            this(pin, Mode.NORMAL);
+        }
+    }
 
-	/**
-	 * Set the output of the pin.
-	 * 
-	 * @param val
-	 *            The output. true is logical "HIGH", false is logical "LOW".
-	 * @throws ConnectionLostException
-	 *             The connection with the IOIO has been lost.
-	 */
-	public void write(boolean val) throws ConnectionLostException;
+    /**
+     * Set the output of the pin.
+     *
+     * @param val The output. true is logical "HIGH", false is logical "LOW".
+     * @throws ConnectionLostException The connection with the IOIO has been lost.
+     */
+    public void write(boolean val) throws ConnectionLostException;
 }

@@ -28,37 +28,37 @@
  */
 package ioio.lib.api;
 
-import ioio.lib.api.exception.ConnectionLostException;
-
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import ioio.lib.api.exception.ConnectionLostException;
+
 /**
  * An interface for controlling a UART module.
- * <p>
+ * <p/>
  * UART is a very common hardware communication protocol, enabling full- duplex,
  * asynchronous point-to-point data transfer. It typically serves for opening
  * consoles or as a basis for higher-level protocols, such as MIDI, RS-232 and
  * RS-485. Uart instances are obtained by calling
  * {@link IOIO#openUart(DigitalInput.Spec, DigitalOutput.Spec, int, Uart.Parity, Uart.StopBits)}.
- * <p>
+ * <p/>
  * The UART protocol is completely symmetric - there is no "master" and "slave"
  * at this layer. Each end may send any number of bytes at arbitrary times,
  * making it very useful for terminals and terminal-controllable devices.
- * <p>
+ * <p/>
  * Working with UART is very intuitive - it just provides a standard InputStream
  * and/or OutputStream. Optionally, one could create a read-only or write-only
  * UART instances, by passing null (or INVALID_PIN) for either TX or RX pins.
- * <p>
+ * <p/>
  * The instance is alive since its creation. If the connection with the IOIO
  * drops at any point, the instance transitions to a disconnected state, which
  * every attempt to use it (except {@link #close()}) will throw a
  * {@link ConnectionLostException}. Whenever {@link #close()} is invoked the
  * instance may no longer be used. Any resources associated with it are freed
  * and can be reused.
- * <p>
+ * <p/>
  * Typical usage:
- * 
+ * <p/>
  * <pre>
  * Uart uart = ioio.openUart(3, 4, 19200, Parity.NONE, StopBits.ONE);
  * InputStream in = uart.getInputStream();
@@ -68,40 +68,54 @@ import java.io.OutputStream;
  * ...
  * uart.close();  // free UART module and pins
  * </pre>
- * 
+ *
  * @see IOIO#openUart(DigitalInput.Spec, DigitalOutput.Spec, int, Uart.Parity,
- *      Uart.StopBits)
+ * Uart.StopBits)
  */
 public interface Uart extends Closeable {
-	/** Parity-bit mode. */
-	enum Parity {
-		/** No parity. */
-		NONE,
-		/** Even parity. */
-		EVEN,
-		/** Odd parity. */
-		ODD
-	}
+    /**
+     * Parity-bit mode.
+     */
+    enum Parity {
+        /**
+         * No parity.
+         */
+        NONE,
+        /**
+         * Even parity.
+         */
+        EVEN,
+        /**
+         * Odd parity.
+         */
+        ODD
+    }
 
-	/** Number of stop-bits. */
-	enum StopBits {
-		/** One stop bit. */
-		ONE,
-		/** Two stop bits. */
-		TWO
-	}
+    /**
+     * Number of stop-bits.
+     */
+    enum StopBits {
+        /**
+         * One stop bit.
+         */
+        ONE,
+        /**
+         * Two stop bits.
+         */
+        TWO
+    }
 
-	/**
-	 * Gets the input stream.
-	 * 
-	 * @return An input stream.
-	 */
-	public InputStream getInputStream();
+    /**
+     * Gets the input stream.
+     *
+     * @return An input stream.
+     */
+    public InputStream getInputStream();
 
-	/**
-	 * Gets the output stream.
-	 * 
-	 * @return An output stream.
-	 */
-	public OutputStream getOutputStream();
+    /**
+     * Gets the output stream.
+     *
+     * @return An output stream.
+     */
+    public OutputStream getOutputStream();
 }

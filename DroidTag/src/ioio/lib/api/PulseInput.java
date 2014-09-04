@@ -32,7 +32,7 @@ import ioio.lib.api.exception.ConnectionLostException;
 
 /**
  * An interface for pulse width and frequency measurements of digital signals.
- * <p>
+ * <p/>
  * PulseInput (commonly known as "input capture") is a versatile module which
  * enables extraction of various timing information from a digital signal. There
  * are two main use cases: pulse duration measurement and frequency measurement.
@@ -44,7 +44,7 @@ import ioio.lib.api.exception.ConnectionLostException;
  * gives us a momentary reading of a signal's frequency or period. This is
  * commonly used, for example, in conjunction with an optical or magnetic sensor
  * for measuring a turning shaft's speed.
- * <p>
+ * <p/>
  * {@link PulseInput} instances are obtained by calling
  * {@link IOIO#openPulseInput(ioio.lib.api.DigitalInput.Spec, ioio.lib.api.PulseInput.ClockRate, ioio.lib.api.PulseInput.PulseMode, boolean)}
  * . When created, some important configuration decisions have to be made: the
@@ -59,14 +59,14 @@ import ioio.lib.api.exception.ConnectionLostException;
  * measured and the time is divided by 4, providing some smoothing as well as
  * better resolution. Similarly for x16 scaling. Note that scaling affects the
  * range of signals to be measured, as discussed below.
- * <p>
+ * <p/>
  * The choice of single vs. double-precision is important to understand: IOIO
  * internally uses either 16-bit counters or 32-bit counters for the timing. 16-
  * counters force us to either limit the maximum duration (and the minimum
  * frequency) or compromise accuracy as compared to 32-bit counters. However, if
  * you need many concurrent pulse measurements in your application, you may have
  * no choice but to use single-precision.
- * <p>
+ * <p/>
  * The clock rate selection is important (and even critical when working in
  * single-precision) and requires the user to make some assumptions about the
  * nature of the measured signal. The higher the clock rate, the more precise
@@ -77,7 +77,7 @@ import ioio.lib.api.exception.ConnectionLostException;
  * maximum expected pulse width (or inverse frequency). If a pulse is received
  * whom duration exceeds the longest allowed pulse, it will be "folded" into the
  * valid range and product garbage readings.
- * <p>
+ * <p/>
  * The following table (sorted by longest pulse) summarizes all possible clock /
  * mode combinations. The table applies for <b>single-precision</b> operation.
  * For double-precision, simply multiply the longest pulse by 65536 and divide
@@ -178,8 +178,8 @@ import ioio.lib.api.exception.ConnectionLostException;
  * <td>3.906KHz</td>
  * </tr>
  * </table>
- * 
- * <p>
+ * <p/>
+ * <p/>
  * In some applications it is desirable to measure every incoming pulse rather
  * than repetitively query the result of the last measurement. For that purpose
  * the {@link #waitPulseGetDuration()} method exists: every incoming pulse width
@@ -193,10 +193,10 @@ import ioio.lib.api.exception.ConnectionLostException;
  * channel when the input signal is very high frequency. Effectively, this means
  * that the maximum sample rate is 200Hz. This rate has been chosen as it
  * enables measure R/C servo signals without missing pulses.
- * 
- * <p>
+ * <p/>
+ * <p/>
  * Typical usage (servo signal pulse width measurement):
- * 
+ * <p/>
  * <pre>
  * {@code
  * // Open pulse input at 16MHz, double-precision
@@ -205,14 +205,14 @@ import ioio.lib.api.exception.ConnectionLostException;
  * float widthSec = in.getDuration();
  * OR:
  * float widthSec = in.waitPulseGetDuration();
- * ... 
+ * ...
  * in.close();  // pin 3 can now be used for something else.
  * }
  * </pre>
- * 
- * <p>
+ * <p/>
+ * <p/>
  * Typical usage (frequency measurement):
- * 
+ * <p/>
  * <pre>
  * {@code
  * // Signal is known to be slightly over 150Hz. Single precision can be used.
@@ -222,101 +222,121 @@ import ioio.lib.api.exception.ConnectionLostException;
  *                                     false);
  * ...
  * float freqHz = in.getFrequency();
- * ... 
+ * ...
  * in.close();  // pin 3 can now be used for something else.
  * }
  * </pre>
  */
 public interface PulseInput extends Closeable {
-	/** An enumeration for describing the module's operating mode. */
-	public enum PulseMode {
-		/** Positive pulse measurement (rising-edge-to-falling-edge). */
-		POSITIVE(1),
-		/** Negative pulse measurement (falling-edge-to-rising-edge). */
-		NEGATIVE(1),
-		/** Frequency measurement (rising-edge-to-rising-edge). */
-		FREQ(1),
-		/** Frequency measurement (rising-edge-to-rising-edge) with 4x scaling. */
-		FREQ_SCALE_4(4),
-		/** Frequency measurement (rising-edge-to-rising-edge) with 16x scaling. */
-		FREQ_SCALE_16(16);
+    /**
+     * An enumeration for describing the module's operating mode.
+     */
+    public enum PulseMode {
+        /**
+         * Positive pulse measurement (rising-edge-to-falling-edge).
+         */
+        POSITIVE(1),
+        /**
+         * Negative pulse measurement (falling-edge-to-rising-edge).
+         */
+        NEGATIVE(1),
+        /**
+         * Frequency measurement (rising-edge-to-rising-edge).
+         */
+        FREQ(1),
+        /**
+         * Frequency measurement (rising-edge-to-rising-edge) with 4x scaling.
+         */
+        FREQ_SCALE_4(4),
+        /**
+         * Frequency measurement (rising-edge-to-rising-edge) with 16x scaling.
+         */
+        FREQ_SCALE_16(16);
 
-		/** The scaling factor as an integer. */
-		public final int scaling;
+        /**
+         * The scaling factor as an integer.
+         */
+        public final int scaling;
 
-		private PulseMode(int s) {
-			scaling = s;
-		}
-	}
+        private PulseMode(int s) {
+            scaling = s;
+        }
+    }
 
-	/** Suported clock rate enum. */
-	public enum ClockRate {
-		/** 16MHz */
-		RATE_16MHz(16000000),
-		/** 2MHz */
-		RATE_2MHz(2000000),
-		/** 250KHz */
-		RATE_250KHz(250000),
-		/** 62.5KHz */
-		RATE_62KHz(62500);
+    /**
+     * Suported clock rate enum.
+     */
+    public enum ClockRate {
+        /**
+         * 16MHz
+         */
+        RATE_16MHz(16000000),
+        /**
+         * 2MHz
+         */
+        RATE_2MHz(2000000),
+        /**
+         * 250KHz
+         */
+        RATE_250KHz(250000),
+        /**
+         * 62.5KHz
+         */
+        RATE_62KHz(62500);
 
-		/** The value in Hertz units. */
-		public final int hertz;
+        /**
+         * The value in Hertz units.
+         */
+        public final int hertz;
 
-		private ClockRate(int h) {
-			hertz = h;
-		}
-	}
+        private ClockRate(int h) {
+            hertz = h;
+        }
+    }
 
-	/**
-	 * Gets the pulse duration in case of pulse measurement mode, or the period
-	 * in case of frequency mode. When scaling is used, this is compensated for
-	 * here, so the duration of a single cycle will be returned.
-	 * <p>
-	 * The first call to this method may block shortly until the first data
-	 * update arrives. The client may interrupt the calling thread.
-	 * 
-	 * @return The duration, in seconds.
-	 * @throws InterruptedException
-	 *             The calling thread has been interrupted.
-	 * @throws ConnectionLostException
-	 *             The connection with the IOIO has been lost.
-	 */
-	public float getDuration() throws InterruptedException,
-			ConnectionLostException;
+    /**
+     * Gets the pulse duration in case of pulse measurement mode, or the period
+     * in case of frequency mode. When scaling is used, this is compensated for
+     * here, so the duration of a single cycle will be returned.
+     * <p/>
+     * The first call to this method may block shortly until the first data
+     * update arrives. The client may interrupt the calling thread.
+     *
+     * @return The duration, in seconds.
+     * @throws InterruptedException    The calling thread has been interrupted.
+     * @throws ConnectionLostException The connection with the IOIO has been lost.
+     */
+    public float getDuration() throws InterruptedException,
+            ConnectionLostException;
 
-	/**
-	 * Reads a single measurement from the queue. If the queue is empty, will
-	 * block until more data arrives. The calling thread may be interrupted in
-	 * order to abort the call. See interface documentation for further
-	 * explanation regarding the read queue.
-	 * <p>
-	 * This method may not be used if the interface has was opened in frequency
-	 * mode.
-	 * 
-	 * @return The duration, in seconds.
-	 * @throws InterruptedException
-	 *             The calling thread has been interrupted.
-	 * @throws ConnectionLostException
-	 *             The connection with the IOIO has been lost.
-	 */
-	public float waitPulseGetDuration() throws InterruptedException,
-			ConnectionLostException;
+    /**
+     * Reads a single measurement from the queue. If the queue is empty, will
+     * block until more data arrives. The calling thread may be interrupted in
+     * order to abort the call. See interface documentation for further
+     * explanation regarding the read queue.
+     * <p/>
+     * This method may not be used if the interface has was opened in frequency
+     * mode.
+     *
+     * @return The duration, in seconds.
+     * @throws InterruptedException    The calling thread has been interrupted.
+     * @throws ConnectionLostException The connection with the IOIO has been lost.
+     */
+    public float waitPulseGetDuration() throws InterruptedException,
+            ConnectionLostException;
 
-	/**
-	 * Gets the momentary frequency of the measured signal. When scaling is
-	 * used, this is compensated for here, so the true frequency of the signal
-	 * will be returned.
-	 * <p>
-	 * The first call to this method may block shortly until the first data
-	 * update arrives. The client may interrupt the calling thread.
-	 * 
-	 * @return The frequency, in Hz.
-	 * @throws InterruptedException
-	 *             The calling thread has been interrupted.
-	 * @throws ConnectionLostException
-	 *             The connection with the IOIO has been lost.
-	 */
-	public float getFrequency() throws InterruptedException,
-			ConnectionLostException;
+    /**
+     * Gets the momentary frequency of the measured signal. When scaling is
+     * used, this is compensated for here, so the true frequency of the signal
+     * will be returned.
+     * <p/>
+     * The first call to this method may block shortly until the first data
+     * update arrives. The client may interrupt the calling thread.
+     *
+     * @return The frequency, in Hz.
+     * @throws InterruptedException    The calling thread has been interrupted.
+     * @throws ConnectionLostException The connection with the IOIO has been lost.
+     */
+    public float getFrequency() throws InterruptedException,
+            ConnectionLostException;
 }

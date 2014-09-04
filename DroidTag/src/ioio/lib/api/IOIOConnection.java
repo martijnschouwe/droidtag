@@ -34,19 +34,20 @@ import java.io.OutputStream;
 import ioio.lib.api.exception.ConnectionLostException;
 
 public interface IOIOConnection {
-	void waitForConnect() throws ConnectionLostException;
+    void waitForConnect() throws ConnectionLostException;
 
-	void disconnect();
+    void disconnect();
 
-	InputStream getInputStream() throws ConnectionLostException;
+    InputStream getInputStream() throws ConnectionLostException;
 
-	OutputStream getOutputStream() throws ConnectionLostException;
+    OutputStream getOutputStream() throws ConnectionLostException;
 
-	/**
-	 * Can this connection be closed. Normally the answer would be "true", but
-	 * some weird connections cannot be closed and need the higher layer to do
-	 * a "soft close" instead.
-	 * @return true This connection can be closed.
-	 */
-	boolean canClose();
+    /**
+     * Can this connection be closed. Normally the answer would be "true", but
+     * some weird connections cannot be closed and need the higher layer to do
+     * a "soft close" instead.
+     *
+     * @return true This connection can be closed.
+     */
+    boolean canClose();
 }

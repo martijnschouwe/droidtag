@@ -28,24 +28,24 @@
  */
 package ioio.lib.api;
 
-import ioio.lib.impl.IOIOImpl;
-import ioio.lib.spi.IOIOConnectionFactory;
-import ioio.lib.util.IOIOConnectionRegistry;
+import android.util.Log;
 
 import java.util.Collection;
 import java.util.NoSuchElementException;
 
-import android.util.Log;
+import ioio.lib.impl.IOIOImpl;
+import ioio.lib.spi.IOIOConnectionFactory;
+import ioio.lib.util.IOIOConnectionRegistry;
 
 /**
  * Factory class for creating instances of the IOIO interface.
- * <p>
+ * <p/>
  * This class acts as the single entry-point to the IOIO API. It creates the
  * bootstrapping between a specific implementation of the IOIO interface and any
  * dependencies it might have, such as the underlying connection logic.
- * <p>
+ * <p/>
  * Typical usage:
- * 
+ * <p/>
  * <pre>
  * IOIO ioio = IOIOFactory.create();
  * try {
@@ -59,37 +59,35 @@ import android.util.Log;
  * </pre>
  */
 public class IOIOFactory {
-	/**
-	 * Create a IOIO instance. This specific implementation creates a IOIO
-	 * instance which works with the actual IOIO board connected via a TCP
-	 * connection (typically over a wired USB connection).
-	 * 
-	 * @return The IOIO instance.
-	 */
-	public static IOIO create() {
-		Collection<IOIOConnectionFactory> factories = IOIOConnectionRegistry
-				.getConnectionFactories();
-		try {
-			return create(factories.iterator().next().createConnection());
-		} catch (NoSuchElementException e) {
-			Log.e(TAG, "No connection is available. This shouldn't happen.");
-			throw e;
-		}
-	}
+    /**
+     * Create a IOIO instance. This specific implementation creates a IOIO
+     * instance which works with the actual IOIO board connected via a TCP
+     * connection (typically over a wired USB connection).
+     *
+     * @return The IOIO instance.
+     */
+    public static IOIO create() {
+        Collection<IOIOConnectionFactory> factories = IOIOConnectionRegistry
+                .getConnectionFactories();
+        try {
+            return create(factories.iterator().next().createConnection());
+        } catch (NoSuchElementException e) {
+            Log.e(TAG, "No connection is available. This shouldn't happen.");
+            throw e;
+        }
+    }
 
-	/**
-	 * Create a IOIO instance with a user-provided underlying connection class.
-	 * This method should be used for establishing a non-standard connection to
-	 * the IOIO board.
-	 * 
-	 * @param connection
-	 *            An instance of a IOIO connection.
-	 * 
-	 * @return The IOIO instance.
-	 */
-	public static IOIO create(IOIOConnection connection) {
-		return new IOIOImpl(connection);
-	}
+    /**
+     * Create a IOIO instance with a user-provided underlying connection class.
+     * This method should be used for establishing a non-standard connection to
+     * the IOIO board.
+     *
+     * @param connection An instance of a IOIO connection.
+     * @return The IOIO instance.
+     */
+    public static IOIO create(IOIOConnection connection) {
+        return new IOIOImpl(connection);
+    }
 
-	private static final String TAG = "IOIOFactory";
+    private static final String TAG = "IOIOFactory";
 }

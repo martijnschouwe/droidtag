@@ -28,74 +28,74 @@
  */
 package ioio.lib.impl;
 
+import java.io.IOException;
+
 import ioio.lib.api.PwmOutput;
 import ioio.lib.api.exception.ConnectionLostException;
 
-import java.io.IOException;
-
 class PwmImpl extends AbstractResource implements PwmOutput {
-	private final int pwmNum_;
-	private final int pinNum_;
-	private final float baseUs_;
-	private final int period_;
+    private final int pwmNum_;
+    private final int pinNum_;
+    private final float baseUs_;
+    private final int period_;
 
-	public PwmImpl(IOIOImpl ioio, int pinNum, int pwmNum, int period,
-			float baseUs) throws ConnectionLostException {
-		super(ioio);
-		pwmNum_ = pwmNum;
-		pinNum_ = pinNum;
-		baseUs_ = baseUs;
-		period_ = period;
-	}
+    public PwmImpl(IOIOImpl ioio, int pinNum, int pwmNum, int period,
+                   float baseUs) throws ConnectionLostException {
+        super(ioio);
+        pwmNum_ = pwmNum;
+        pinNum_ = pinNum;
+        baseUs_ = baseUs;
+        period_ = period;
+    }
 
-	@Override
-	public synchronized void close() {
-		super.close();
-		ioio_.closePwm(pwmNum_);
-		ioio_.closePin(pinNum_);
-	}
+    @Override
+    public synchronized void close() {
+        super.close();
+        ioio_.closePwm(pwmNum_);
+        ioio_.closePin(pinNum_);
+    }
 
-	@Override
-	public void setDutyCycle(float dutyCycle) throws ConnectionLostException {
-		assert (dutyCycle <= 1 && dutyCycle >= 0);
-		setPulseWidthInClocks(period_ * dutyCycle);
-	}
+    @Override
+    public void setDutyCycle(float dutyCycle) throws ConnectionLostException {
+        assert (dutyCycle <= 1 && dutyCycle >= 0);
+        setPulseWidthInClocks(period_ * dutyCycle);
+    }
 
-	@Override
-	public void setPulseWidth(int pulseWidthUs) throws ConnectionLostException {
-		setPulseWidth((float) pulseWidthUs);
-	}
+    @Override
+    public void setPulseWidth(int pulseWidthUs) throws ConnectionLostException {
+        setPulseWidth((float) pulseWidthUs);
+    }
 
-	@Override
-	public void setPulseWidth(float pulseWidthUs)
-			throws ConnectionLostException {
-		assert (pulseWidthUs >= 0);
-		float p = pulseWidthUs / baseUs_;
-		setPulseWidthInClocks(p);
-	}
+    @Override
+    public void setPulseWidth(float pulseWidthUs)
+            throws ConnectionLostException {
+        assert (pulseWidthUs >= 0);
+        float p = pulseWidthUs / baseUs_;
+        setPulseWidthInClocks(p);
+    }
 
-	synchronized private void setPulseWidthInClocks(float p)
-			throws ConnectionLostException {
-		checkState();
-		if (p > period_) {
-			p = period_;
-		}
-		int pw;
-		int fraction;
-		p -= 1; // period parameter is one less than the actual period length
-				// yes, there is 0 and then 2 (no 1) - this is not a bug, that
-				// is how the hardware PWM module works.
-		if (p < 1) {
-			pw = 0;
-			fraction = 0;
-		} else {
-			pw = (int) p;
-			fraction = ((int) p * 4) & 0x03;
-		}
-		try {
-			ioio_.protocol_.setPwmDutyCycle(pwmNum_, pw, fraction);
-		} catch (IOException e) {
-			throw new ConnectionLostException(e);
-		}
-	}
+    synchronized private void setPulseWidthInClocks(float p)
+            throws ConnectionLostException {
+        checkState();
+        if (p > period_) {
+            p = period_;
+        }
+        int pw;
+        int fraction;
+        p -= 1; // period parameter is one less than the actual period length
+        // yes, there is 0 and then 2 (no 1) - this is not a bug, that
+        // is how the hardware PWM module works.
+        if (p < 1) {
+            pw = 0;
+            fraction = 0;
+        } else {
+            pw = (int) p;
+            fraction = ((int) p * 4) & 0x03;
+        }
+        try {
+            ioio_.protocol_.setPwmDutyCycle(pwmNum_, pw, fraction);
+        } catch (IOException e) {
+            throw new ConnectionLostException(e);
+        }
+    }
 }

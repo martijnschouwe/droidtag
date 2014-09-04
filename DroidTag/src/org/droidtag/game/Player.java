@@ -5,72 +5,72 @@ package org.droidtag.game;
  */
 public class Player {
 
-	private int id;
-	private int teamId;
-	private int health;
-	private String name;
-	private PlayerType playerType;
-	private int endurance;
-	private int leadership;
-	
-	public Player() {
-	}
+    private int id;
+    private int teamId;
+    private int health;
+    private String name;
+    private PlayerType playerType;
+    private int endurance;
+    private int leadership;
 
-	public int getId() {
-		return id;
-	}
+    public Player() {
+    }
 
-	public void setId(int id) {
-		this.id = id;
-	}
+    public int getId() {
+        return id;
+    }
 
-	public int getTeamId() {
-		return teamId;
-	}
+    public void setId(int id) {
+        this.id = id;
+    }
 
-	public void setTeamId(int teamId) {
-		this.teamId = teamId;
-	}
+    public int getTeamId() {
+        return teamId;
+    }
 
-	public int getHealth() {
-		return health;
-	}
+    public void setTeamId(int teamId) {
+        this.teamId = teamId;
+    }
 
-	public void setHealth(int health) {
-		this.health = health;
-	}
+    public int getHealth() {
+        return health;
+    }
 
-	public String getName() {
-		return name;
-	}
+    public void setHealth(int health) {
+        this.health = health;
+    }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public PlayerType getPlayerType() {
-		return playerType;
-	}
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	public void setPlayerType(PlayerType playerType) {
-		this.playerType = playerType;
-	}
+    public PlayerType getPlayerType() {
+        return playerType;
+    }
 
-	public int getEndurance() {
-		return endurance;
-	}
+    public void setPlayerType(PlayerType playerType) {
+        this.playerType = playerType;
+    }
 
-	public void setEndurance(int endurance) {
-		this.endurance = endurance;
-	}
+    public int getEndurance() {
+        return endurance;
+    }
 
-	public int getLeadership() {
-		return leadership;
-	}
+    public void setEndurance(int endurance) {
+        this.endurance = endurance;
+    }
 
-	public void setLeadership(int leadership) {
-		this.leadership = leadership;
-	}
-	
-	
+    public int getLeadership() {
+        return leadership;
+    }
+
+    public void setLeadership(int leadership) {
+        this.leadership = leadership;
+    }
+
+
 }

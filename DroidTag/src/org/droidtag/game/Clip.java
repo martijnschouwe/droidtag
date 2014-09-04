@@ -2,21 +2,21 @@ package org.droidtag.game;
 
 /**
  * @author mschouwe
- *	Clip class which holds rounds
+ *         Clip class which holds rounds
  */
 public class Clip {
 
-	private int rounds;
+    private int rounds;
 
-	public Clip() {
-	}
+    public Clip() {
+    }
 
-	public int getRounds() {
-		return rounds;
-	}
+    public int getRounds() {
+        return rounds;
+    }
 
-	public void setRounds(int rounds) {
-		this.rounds = rounds;
-	}
-	
+    public void setRounds(int rounds) {
+        this.rounds = rounds;
+    }
+
 }

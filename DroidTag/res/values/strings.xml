@@ -9,5 +9,6 @@
     <string name="hello_world">Hello world!</string>
     <string name="title_activity_gamestart">Gamestart</string>
     <string name="start">Welcome to droidtag!</string>
+    <string name="info">Info</string>
 
 </resources>

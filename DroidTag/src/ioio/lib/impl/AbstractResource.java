@@ -28,48 +28,48 @@
  */
 package ioio.lib.impl;
 
+import ioio.lib.api.Closeable;
 import ioio.lib.api.exception.ConnectionLostException;
 import ioio.lib.impl.IncomingState.DisconnectListener;
-import ioio.lib.api.Closeable;
 
 class AbstractResource implements Closeable, DisconnectListener {
-	enum State {
-		OPEN,
-		CLOSED,
-		DISCONNECTED
-	}
-	
-	protected State state_ = State.OPEN;
-	protected final IOIOImpl ioio_;
+    enum State {
+        OPEN,
+        CLOSED,
+        DISCONNECTED
+    }
 
-	public AbstractResource(IOIOImpl ioio) throws ConnectionLostException {
-		ioio_ = ioio;
-	}
-	
-	@Override
-	synchronized public void disconnected() {
-		if (state_ != State.CLOSED) {
-			state_ = State.DISCONNECTED;
-		}
-	}
+    protected State state_ = State.OPEN;
+    protected final IOIOImpl ioio_;
 
-	@Override
-	synchronized public void close() {
-		if (state_ == State.CLOSED) {
-			throw new IllegalStateException("Trying to use a closed resouce");
-		} else if (state_ == State.DISCONNECTED) {
-			state_ = State.CLOSED;
-			return;
-		}
-		state_ = State.CLOSED;
-		ioio_.removeDisconnectListener(this);
-	}
-	
-	protected synchronized void checkState() throws ConnectionLostException {
-		if (state_ == State.CLOSED) {
-			throw new IllegalStateException("Trying to use a closed resouce");
-		} else if (state_ == State.DISCONNECTED) {
-			throw new ConnectionLostException();
-		}
-	}
+    public AbstractResource(IOIOImpl ioio) throws ConnectionLostException {
+        ioio_ = ioio;
+    }
+
+    @Override
+    synchronized public void disconnected() {
+        if (state_ != State.CLOSED) {
+            state_ = State.DISCONNECTED;
+        }
+    }
+
+    @Override
+    synchronized public void close() {
+        if (state_ == State.CLOSED) {
+            throw new IllegalStateException("Trying to use a closed resouce");
+        } else if (state_ == State.DISCONNECTED) {
+            state_ = State.CLOSED;
+            return;
+        }
+        state_ = State.CLOSED;
+        ioio_.removeDisconnectListener(this);
+    }
+
+    protected synchronized void checkState() throws ConnectionLostException {
+        if (state_ == State.CLOSED) {
+            throw new IllegalStateException("Trying to use a closed resouce");
+        } else if (state_ == State.DISCONNECTED) {
+            throw new ConnectionLostException();
+        }
+    }
 }

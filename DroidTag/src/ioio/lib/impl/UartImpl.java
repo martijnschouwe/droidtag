@@ -28,81 +28,81 @@
  */
 package ioio.lib.impl;
 
+import android.util.Log;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+
 import ioio.lib.api.IOIO;
 import ioio.lib.api.Uart;
 import ioio.lib.api.exception.ConnectionLostException;
 import ioio.lib.impl.FlowControlledOutputStream.Sender;
 import ioio.lib.impl.IncomingState.DataModuleListener;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-
-import android.util.Log;
-
 class UartImpl extends AbstractResource implements DataModuleListener, Sender, Uart {
-	private static final int MAX_PACKET = 64;
-	
-	private final int uartNum_;
-	private final int rxPinNum_;
-	private final int txPinNum_;
-	private final FlowControlledOutputStream outgoing_ = new FlowControlledOutputStream(this, MAX_PACKET);
-	private final QueueInputStream incoming_ = new QueueInputStream();
-	
-	public UartImpl(IOIOImpl ioio, int txPin, int rxPin, int uartNum) throws ConnectionLostException {
-		super(ioio);
-		uartNum_ = uartNum;
-		rxPinNum_ = rxPin;
-		txPinNum_ = txPin;
-	}
+    private static final int MAX_PACKET = 64;
 
-	@Override
-	public void dataReceived(byte[] data, int size) {
-		incoming_.write(data, size);
-	}
+    private final int uartNum_;
+    private final int rxPinNum_;
+    private final int txPinNum_;
+    private final FlowControlledOutputStream outgoing_ = new FlowControlledOutputStream(this, MAX_PACKET);
+    private final QueueInputStream incoming_ = new QueueInputStream();
 
-	@Override
-	public void send(byte[] data, int size) {
-		try {
-			ioio_.protocol_.uartData(uartNum_, size, data);
-		} catch (IOException e) {
-			Log.e("UartImpl", e.getMessage());
-		}
-	}
+    public UartImpl(IOIOImpl ioio, int txPin, int rxPin, int uartNum) throws ConnectionLostException {
+        super(ioio);
+        uartNum_ = uartNum;
+        rxPinNum_ = rxPin;
+        txPinNum_ = txPin;
+    }
 
-	@Override
-	synchronized public void close() {
-		super.close();
-		incoming_.close();
-		outgoing_.close();
-		ioio_.closeUart(uartNum_);
-		if (rxPinNum_ != IOIO.INVALID_PIN) {
-			ioio_.closePin(rxPinNum_);
-		}
-		if (txPinNum_ != IOIO.INVALID_PIN) {
-			ioio_.closePin(txPinNum_);
-		}
-	}
-	
-	@Override
-	synchronized public void disconnected() {
-		super.disconnected();
-		incoming_.kill();
-		outgoing_.close();
-	}
+    @Override
+    public void dataReceived(byte[] data, int size) {
+        incoming_.write(data, size);
+    }
 
-	@Override
-	public InputStream getInputStream() {
-		return incoming_;
-	}
+    @Override
+    public void send(byte[] data, int size) {
+        try {
+            ioio_.protocol_.uartData(uartNum_, size, data);
+        } catch (IOException e) {
+            Log.e("UartImpl", e.getMessage());
+        }
+    }
 
-	@Override
-	public OutputStream getOutputStream() {
-		return outgoing_;
-	}
+    @Override
+    synchronized public void close() {
+        super.close();
+        incoming_.close();
+        outgoing_.close();
+        ioio_.closeUart(uartNum_);
+        if (rxPinNum_ != IOIO.INVALID_PIN) {
+            ioio_.closePin(rxPinNum_);
+        }
+        if (txPinNum_ != IOIO.INVALID_PIN) {
+            ioio_.closePin(txPinNum_);
+        }
+    }
 
-	@Override
-	public void reportAdditionalBuffer(int bytesRemaining) {
-		outgoing_.readyToSend(bytesRemaining);
-	}
+    @Override
+    synchronized public void disconnected() {
+        super.disconnected();
+        incoming_.kill();
+        outgoing_.close();
+    }
+
+    @Override
+    public InputStream getInputStream() {
+        return incoming_;
+    }
+
+    @Override
+    public OutputStream getOutputStream() {
+        return outgoing_;
+    }
+
+    @Override
+    public void reportAdditionalBuffer(int bytesRemaining) {
+        outgoing_.readyToSend(bytesRemaining);
+    }
 }

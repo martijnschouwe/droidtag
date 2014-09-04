@@ -29,18 +29,18 @@
 
 package ioio.lib.util;
 
-import ioio.lib.spi.IOIOConnectionFactory;
-
 import java.util.Collection;
 import java.util.LinkedList;
 
+import ioio.lib.spi.IOIOConnectionFactory;
+
 /**
  * Manages IOIO threads per connection.
- * <p>
+ * <p/>
  * This class will take care of creating a thread for each possible IOIO
  * connection, and cleaning up these threads. Client is responsible for providing the
  * actual threads, by implementing the IOIOConnectionThreadProvider interface.
- * <p>
+ * <p/>
  * Basic usage is:
  * <ul>
  * <li>Create a IOIOConnectionManager instance, pass a IOIOConnectionThreadProvider.</li>
@@ -50,63 +50,63 @@ import java.util.LinkedList;
  * </ul>
  */
 public class IOIOConnectionManager {
-	private final IOIOConnectionThreadProvider provider_;
+    private final IOIOConnectionThreadProvider provider_;
 
-	public IOIOConnectionManager(IOIOConnectionThreadProvider provider) {
-		provider_ = provider;
-	}
+    public IOIOConnectionManager(IOIOConnectionThreadProvider provider) {
+        provider_ = provider;
+    }
 
-	public abstract static class Thread extends java.lang.Thread {
-		public abstract void abort();
-	}
+    public abstract static class Thread extends java.lang.Thread {
+        public abstract void abort();
+    }
 
-	public void start() {
-		createAllThreads();
-		startAllThreads();
-	}
+    public void start() {
+        createAllThreads();
+        startAllThreads();
+    }
 
-	public void stop() {
-		abortAllThreads();
-		try {
-			joinAllThreads();
-		} catch (InterruptedException e) {
-		}
-	}
+    public void stop() {
+        abortAllThreads();
+        try {
+            joinAllThreads();
+        } catch (InterruptedException e) {
+        }
+    }
 
-	public interface IOIOConnectionThreadProvider {
-		public Thread createThreadFromFactory(IOIOConnectionFactory factory);
-	}
+    public interface IOIOConnectionThreadProvider {
+        public Thread createThreadFromFactory(IOIOConnectionFactory factory);
+    }
 
-	private Collection<Thread> threads_ = new LinkedList<Thread>();
+    private Collection<Thread> threads_ = new LinkedList<Thread>();
 
-	private void abortAllThreads() {
-		for (Thread thread : threads_) {
-			thread.abort();
-		}
-	}
+    private void abortAllThreads() {
+        for (Thread thread : threads_) {
+            thread.abort();
+        }
+    }
 
-	private void joinAllThreads() throws InterruptedException {
-		for (Thread thread : threads_) {
-			thread.join();
-		}
-	}
+    private void joinAllThreads() throws InterruptedException {
+        for (Thread thread : threads_) {
+            thread.join();
+        }
+    }
 
-	private void createAllThreads() {
-		threads_.clear();
-		Collection<IOIOConnectionFactory> factories = IOIOConnectionRegistry
-				.getConnectionFactories();
-		for (IOIOConnectionFactory factory : factories) {
-			Thread thread = provider_.createThreadFromFactory(factory);
-			if (thread != null) {
-				threads_.add(thread);
-			}
-		}
-	}
+    private void createAllThreads() {
+        threads_.clear();
+        Collection<IOIOConnectionFactory> factories = IOIOConnectionRegistry
+                .getConnectionFactories();
+        for (IOIOConnectionFactory factory : factories) {
+            Thread thread = provider_.createThreadFromFactory(factory);
+            if (thread != null) {
+                threads_.add(thread);
+            }
+        }
+    }
 
-	private void startAllThreads() {
-		for (Thread thread : threads_) {
-			thread.start();
-		}
-	}
+    private void startAllThreads() {
+        for (Thread thread : threads_) {
+            thread.start();
+        }
+    }
 
 }

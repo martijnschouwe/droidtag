@@ -28,22 +28,22 @@
  */
 package ioio.lib.util;
 
+import android.util.Log;
+
+import java.util.Collection;
+import java.util.LinkedList;
+
 import ioio.lib.api.IOIOConnection;
 import ioio.lib.api.IOIOFactory;
 import ioio.lib.spi.IOIOConnectionBootstrap;
 import ioio.lib.spi.IOIOConnectionFactory;
 import ioio.lib.spi.NoRuntimeSupportException;
 
-import java.util.Collection;
-import java.util.LinkedList;
-
-import android.util.Log;
-
 /**
  * A utility class for managing available connection types to IOIO.
- * <p>
+ * <p/>
  * <b>For advanced usage only!</b>
- * <p>
+ * <p/>
  * This class facilitates dynamic linkage and instantiation of different IOIO
  * connection types. {@link IOIOConnectionBootstrap} classes enable creation of
  * {@link IOIOConnectionFactory} instances, from which concrete
@@ -51,7 +51,7 @@ import android.util.Log;
  * {@link IOIOConnectionBootstrap} is dynamic, thus enabling linkage to succeed
  * with or without those bootstraps. Likewise, during runtime, the absence of
  * bootstraps is handled gracefully.
- * 
+ * <p/>
  * A typical usage will call {@link #addBootstraps(String[])} with a list of
  * class names to be sought from a static initializer block. It may then call
  * {@link #getBootstraps()} to obtain any bootstrap classes that are available
@@ -59,71 +59,70 @@ import android.util.Log;
  * handling. Last, the {@link #getConnectionFactories()} will return a
  * collection of {@link IOIOConnectionFactory}, each representing one possible
  * communication channel to a IOIO.
- * 
  */
 public class IOIOConnectionRegistry {
-	/**
-	 * Get all available connection specifications. This is a list of all
-	 * currently available communication channels in which a IOIO may be
-	 * available. The client typically passes elements of this collection to
-	 * {@link IOIOFactory#create(IOIOConnection)}, possibly after filtering
-	 * based on the specification's properties.
-	 * 
-	 * @return A collection of specifications.
-	 */
-	public static Collection<IOIOConnectionFactory> getConnectionFactories() {
-		Collection<IOIOConnectionFactory> result = new LinkedList<IOIOConnectionFactory>();
-		for (IOIOConnectionBootstrap bootstrap : bootstraps_) {
-			bootstrap.getFactories(result);
-		}
-		return result;
-	}
+    /**
+     * Get all available connection specifications. This is a list of all
+     * currently available communication channels in which a IOIO may be
+     * available. The client typically passes elements of this collection to
+     * {@link IOIOFactory#create(IOIOConnection)}, possibly after filtering
+     * based on the specification's properties.
+     *
+     * @return A collection of specifications.
+     */
+    public static Collection<IOIOConnectionFactory> getConnectionFactories() {
+        Collection<IOIOConnectionFactory> result = new LinkedList<IOIOConnectionFactory>();
+        for (IOIOConnectionBootstrap bootstrap : bootstraps_) {
+            bootstrap.getFactories(result);
+        }
+        return result;
+    }
 
-	/**
-	 * For advanced usage only! Used for special runtime handling of bootstrap
-	 * classes.
-	 * 
-	 * @return The bootstraps.
-	 */
-	public static Collection<IOIOConnectionBootstrap> getBootstraps() {
-		return bootstraps_;
-	}
+    /**
+     * For advanced usage only! Used for special runtime handling of bootstrap
+     * classes.
+     *
+     * @return The bootstraps.
+     */
+    public static Collection<IOIOConnectionBootstrap> getBootstraps() {
+        return bootstraps_;
+    }
 
-	/**
-	 * For advanced usage only! Add platform-specific connection bootstrap
-	 * classes. Call before calling {@link #getConnectionFactories()}.
-	 */
-	public static void addBootstraps(String[] classNames) {
-		for (String className : classNames) {
-			addBootstrap(className);
-		}
-	}
+    /**
+     * For advanced usage only! Add platform-specific connection bootstrap
+     * classes. Call before calling {@link #getConnectionFactories()}.
+     */
+    public static void addBootstraps(String[] classNames) {
+        for (String className : classNames) {
+            addBootstrap(className);
+        }
+    }
 
-	private static final String TAG = "IOIOConnectionRegistry";
+    private static final String TAG = "IOIOConnectionRegistry";
 
-	private static Collection<IOIOConnectionBootstrap> bootstraps_;
+    private static Collection<IOIOConnectionBootstrap> bootstraps_;
 
-	static {
-		bootstraps_ = new LinkedList<IOIOConnectionBootstrap>();
-	}
+    static {
+        bootstraps_ = new LinkedList<IOIOConnectionBootstrap>();
+    }
 
-	private static void addBootstrap(String className) {
-		try {
-			Class<? extends IOIOConnectionBootstrap> bootstrapClass = Class
-					.forName(className).asSubclass(
-							IOIOConnectionBootstrap.class);
-			bootstraps_.add(bootstrapClass.newInstance());
-			Log.d(TAG, "Successfully added bootstrap class: " + className);
-		} catch (ClassNotFoundException e) {
-			Log.d(TAG, "Bootstrap class not found: " + className
-					+ ". Not adding.");
-		} catch (NoRuntimeSupportException e) {
-			Log.d(TAG, "No runtime support for: " + className + ". Not adding.");
-		} catch (Throwable e) {
-			Log.e(TAG,
-					"Exception caught while attempting to initialize connection factory",
-					e);
-		}
-	}
+    private static void addBootstrap(String className) {
+        try {
+            Class<? extends IOIOConnectionBootstrap> bootstrapClass = Class
+                    .forName(className).asSubclass(
+                            IOIOConnectionBootstrap.class);
+            bootstraps_.add(bootstrapClass.newInstance());
+            Log.d(TAG, "Successfully added bootstrap class: " + className);
+        } catch (ClassNotFoundException e) {
+            Log.d(TAG, "Bootstrap class not found: " + className
+                    + ". Not adding.");
+        } catch (NoRuntimeSupportException e) {
+            Log.d(TAG, "No runtime support for: " + className + ". Not adding.");
+        } catch (Throwable e) {
+            Log.e(TAG,
+                    "Exception caught while attempting to initialize connection factory",
+                    e);
+        }
+    }
 
 }

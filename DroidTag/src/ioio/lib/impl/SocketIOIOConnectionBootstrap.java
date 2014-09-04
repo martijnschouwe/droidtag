@@ -29,35 +29,37 @@
 
 package ioio.lib.impl;
 
+import java.util.Collection;
+
 import ioio.lib.api.IOIOConnection;
 import ioio.lib.spi.IOIOConnectionBootstrap;
 import ioio.lib.spi.IOIOConnectionFactory;
 
-import java.util.Collection;
-
 public class SocketIOIOConnectionBootstrap implements IOIOConnectionBootstrap {
-	/** The TCP port used for communicating with the IOIO board. */
-	public static final int IOIO_PORT = 4545;
+    /**
+     * The TCP port used for communicating with the IOIO board.
+     */
+    public static final int IOIO_PORT = 4545;
 
-	@Override
-	public void getFactories(Collection<IOIOConnectionFactory> result) {
-		result.add(new IOIOConnectionFactory() {
-			private Integer port_ = new Integer(IOIO_PORT);
-			
-			@Override
-			public String getType() {
-				return SocketIOIOConnection.class.getCanonicalName();
-			}
-			
-			@Override
-			public Object getExtra() {
-				return port_;
-			}
-			
-			@Override
-			public IOIOConnection createConnection() {
-				return new SocketIOIOConnection(IOIO_PORT);
-			}
-		});
-	}
+    @Override
+    public void getFactories(Collection<IOIOConnectionFactory> result) {
+        result.add(new IOIOConnectionFactory() {
+            private Integer port_ = new Integer(IOIO_PORT);
+
+            @Override
+            public String getType() {
+                return SocketIOIOConnection.class.getCanonicalName();
+            }
+
+            @Override
+            public Object getExtra() {
+                return port_;
+            }
+
+            @Override
+            public IOIOConnection createConnection() {
+                return new SocketIOIOConnection(IOIO_PORT);
+            }
+        });
+    }
 }

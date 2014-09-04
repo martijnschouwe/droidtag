@@ -29,98 +29,100 @@
 package ioio.lib.impl;
 
 
+import android.util.Log;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Queue;
 import java.util.concurrent.ArrayBlockingQueue;
 
-import android.util.Log;
-
 class QueueInputStream extends InputStream {
-	private enum State {
-		OPEN, CLOSED, KILLED
-	};
+    private enum State {
+        OPEN, CLOSED, KILLED
+    }
 
-	private final Queue<Byte> queue_ = new ArrayBlockingQueue<Byte>(
-			Constants.BUFFER_SIZE);
-	private State state_ = State.OPEN;
+    ;
 
-	@Override
-	synchronized public int read() throws IOException {
-		try {
-			while (state_ == State.OPEN && queue_.isEmpty()) {
-				wait();
-			}
-			if (state_ == State.KILLED) {
-				throw new IOException("Stream has been closed");
-			}
-			if (state_ == State.CLOSED && queue_.isEmpty()) {
-				return -1;
-			}
-			return ((int) queue_.remove()) & 0xFF;
-		} catch (InterruptedException e) {
-			throw new IOException("Interrupted");
-		}
-	}
+    private final Queue<Byte> queue_ = new ArrayBlockingQueue<Byte>(
+            Constants.BUFFER_SIZE);
+    private State state_ = State.OPEN;
 
-	@Override
-	synchronized public int read(byte[] b, int off, int len) throws IOException {
-		if (len == 0) {
-			return 0;
-		}
-		try {
-			while (state_ == State.OPEN && queue_.isEmpty()) {
-				wait();
-			}
-			if (state_ == State.KILLED) {
-				throw new IOException("Stream has been closed");
-			}
-			if (state_ == State.CLOSED && queue_.isEmpty()) {
-				return -1;
-			}
-			if (len > queue_.size()) {
-				len = queue_.size();
-			}
-			for (int i = 0; i < len; ++i) {
-				b[off++] = queue_.remove();
-			}
-			return len;
-		} catch (InterruptedException e) {
-			throw new IOException("Interrupted");
-		}
-	}
+    @Override
+    synchronized public int read() throws IOException {
+        try {
+            while (state_ == State.OPEN && queue_.isEmpty()) {
+                wait();
+            }
+            if (state_ == State.KILLED) {
+                throw new IOException("Stream has been closed");
+            }
+            if (state_ == State.CLOSED && queue_.isEmpty()) {
+                return -1;
+            }
+            return ((int) queue_.remove()) & 0xFF;
+        } catch (InterruptedException e) {
+            throw new IOException("Interrupted");
+        }
+    }
 
-	synchronized public void write(byte[] data, int size) {
-		for (int i = 0; i < size; ++i) {
-			if (queue_.size() == Constants.BUFFER_SIZE) {
-				Log.e("QueueInputStream", "Buffer overflow, discarding data");
-				break;
-			}
-			queue_.add(data[i]);
-		}
-		notifyAll();
-	}
+    @Override
+    synchronized public int read(byte[] b, int off, int len) throws IOException {
+        if (len == 0) {
+            return 0;
+        }
+        try {
+            while (state_ == State.OPEN && queue_.isEmpty()) {
+                wait();
+            }
+            if (state_ == State.KILLED) {
+                throw new IOException("Stream has been closed");
+            }
+            if (state_ == State.CLOSED && queue_.isEmpty()) {
+                return -1;
+            }
+            if (len > queue_.size()) {
+                len = queue_.size();
+            }
+            for (int i = 0; i < len; ++i) {
+                b[off++] = queue_.remove();
+            }
+            return len;
+        } catch (InterruptedException e) {
+            throw new IOException("Interrupted");
+        }
+    }
 
-	@Override
-	synchronized public int available() throws IOException {
-		return queue_.size();
-	}
+    synchronized public void write(byte[] data, int size) {
+        for (int i = 0; i < size; ++i) {
+            if (queue_.size() == Constants.BUFFER_SIZE) {
+                Log.e("QueueInputStream", "Buffer overflow, discarding data");
+                break;
+            }
+            queue_.add(data[i]);
+        }
+        notifyAll();
+    }
 
-	@Override
-	synchronized public void close() {
-		if (state_ != State.OPEN) {
-			return;
-		}
-		state_ = State.CLOSED;
-		notifyAll();
-	}
+    @Override
+    synchronized public int available() throws IOException {
+        return queue_.size();
+    }
 
-	synchronized public void kill() {
-		if (state_ != State.OPEN) {
-			return;
-		}
-		state_ = State.KILLED;
-		notifyAll();
-	}
+    @Override
+    synchronized public void close() {
+        if (state_ != State.OPEN) {
+            return;
+        }
+        state_ = State.CLOSED;
+        notifyAll();
+    }
+
+    synchronized public void kill() {
+        if (state_ != State.OPEN) {
+            return;
+        }
+        state_ = State.KILLED;
+        notifyAll();
+    }
 
 }

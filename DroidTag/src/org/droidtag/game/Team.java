@@ -3,40 +3,40 @@ package org.droidtag.game;
 
 /**
  * @author mschouwe
- * Team class for setup of a team
+ *         Team class for setup of a team
  */
 public class Team {
 
-	private int id;
-	private int captainId;
-	private String name;
-	
-	public Team() {
-	}
+    private int id;
+    private int captainId;
+    private String name;
 
-	public int getId() {
-		return id;
-	}
+    public Team() {
+    }
 
-	public void setId(int id) {
-		this.id = id;
-	}
+    public int getId() {
+        return id;
+    }
 
-	public int getCaptainId() {
-		return captainId;
-	}
+    public void setId(int id) {
+        this.id = id;
+    }
 
-	public void setCaptainId(int captainId) {
-		this.captainId = captainId;
-	}
+    public int getCaptainId() {
+        return captainId;
+    }
 
-	public String getName() {
-		return name;
-	}
+    public void setCaptainId(int captainId) {
+        this.captainId = captainId;
+    }
 
-	public void setName(String name) {
-		this.name = name;
-	}
-	
-	
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+
 }

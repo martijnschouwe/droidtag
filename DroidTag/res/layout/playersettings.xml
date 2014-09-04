@@ -1,23 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="fill_parent" android:layout_height="fill_parent">
-    
-    <PreferenceCategory
-    	android:title="@string/player_profile">
-    	
-    	<EditTextPreference
-                android:name="name"
-                android:summary="Your real name"
-                android:title="@string/player_profile"
-                android:key="name" 
-         />
-         
-         <EditTextPreference
-                android:name="playname"
-                android:summary="Your game name"
-                android:title="@string/player_profile"
-                android:key="playname" 
-         />
-    	
-    </PreferenceCategory>	
-    
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent">
+
+    <PreferenceCategory android:title="@string/player_profile">
+
+        <EditTextPreference
+            android:name="name"
+            android:summary="Your real name"
+            android:title="@string/player_profile"
+            android:key="name" />
+
+        <EditTextPreference
+            android:name="playname"
+            android:summary="Your game name"
+            android:title="@string/player_profile"
+            android:key="playname" />
+
+    </PreferenceCategory>
+
 </PreferenceScreen>

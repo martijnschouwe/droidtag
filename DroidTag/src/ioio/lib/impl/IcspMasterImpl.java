@@ -28,108 +28,108 @@
  */
 package ioio.lib.impl;
 
-import ioio.lib.api.IcspMaster;
-import ioio.lib.api.exception.ConnectionLostException;
-import ioio.lib.impl.IncomingState.DataModuleListener;
-
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.Queue;
 
+import ioio.lib.api.IcspMaster;
+import ioio.lib.api.exception.ConnectionLostException;
+import ioio.lib.impl.IncomingState.DataModuleListener;
+
 class IcspMasterImpl extends AbstractResource implements IcspMaster,
-		DataModuleListener {
-	private Queue<Integer> resultQueue_ = new LinkedList<Integer>();
-	private int rxRemaining_ = 0;
+        DataModuleListener {
+    private Queue<Integer> resultQueue_ = new LinkedList<Integer>();
+    private int rxRemaining_ = 0;
 
-	public IcspMasterImpl(IOIOImpl ioio) throws ConnectionLostException {
-		super(ioio);
-	}
+    public IcspMasterImpl(IOIOImpl ioio) throws ConnectionLostException {
+        super(ioio);
+    }
 
-	@Override
-	synchronized public void dataReceived(byte[] data, int size) {
-		assert (size == 2);
-		int result = (byteToInt(data[1]) << 8) | byteToInt(data[0]);
-		resultQueue_.add(result);
-		notifyAll();
-	}
+    @Override
+    synchronized public void dataReceived(byte[] data, int size) {
+        assert (size == 2);
+        int result = (byteToInt(data[1]) << 8) | byteToInt(data[0]);
+        resultQueue_.add(result);
+        notifyAll();
+    }
 
-	@Override
-	synchronized public void reportAdditionalBuffer(int bytesToAdd) {
-		rxRemaining_ += bytesToAdd;
-		notifyAll();
-	}
+    @Override
+    synchronized public void reportAdditionalBuffer(int bytesToAdd) {
+        rxRemaining_ += bytesToAdd;
+        notifyAll();
+    }
 
-	@Override
-	synchronized public void enterProgramming() throws ConnectionLostException {
-		checkState();
-		try {
-			ioio_.protocol_.icspEnter();
-		} catch (IOException e) {
-			throw new ConnectionLostException(e);
-		}
-	}
+    @Override
+    synchronized public void enterProgramming() throws ConnectionLostException {
+        checkState();
+        try {
+            ioio_.protocol_.icspEnter();
+        } catch (IOException e) {
+            throw new ConnectionLostException(e);
+        }
+    }
 
-	@Override
-	synchronized public void exitProgramming() throws ConnectionLostException {
-		checkState();
-		try {
-			ioio_.protocol_.icspExit();
-		} catch (IOException e) {
-			throw new ConnectionLostException(e);
-		}
-	}
+    @Override
+    synchronized public void exitProgramming() throws ConnectionLostException {
+        checkState();
+        try {
+            ioio_.protocol_.icspExit();
+        } catch (IOException e) {
+            throw new ConnectionLostException(e);
+        }
+    }
 
-	@Override
-	synchronized public void executeInstruction(int instruction)
-			throws ConnectionLostException {
-		checkState();
-		try {
-			ioio_.protocol_.icspSix(instruction);
-		} catch (IOException e) {
-			throw new ConnectionLostException(e);
-		}
-	}
+    @Override
+    synchronized public void executeInstruction(int instruction)
+            throws ConnectionLostException {
+        checkState();
+        try {
+            ioio_.protocol_.icspSix(instruction);
+        } catch (IOException e) {
+            throw new ConnectionLostException(e);
+        }
+    }
 
-	@Override
-	synchronized public void readVisi() throws ConnectionLostException,
-			InterruptedException {
-		checkState();
-		while (rxRemaining_ < 2 && state_ == State.OPEN) {
-			wait();
-		}
-		checkState();
-		rxRemaining_ -= 2;
-		try {
-			ioio_.protocol_.icspRegout();
-		} catch (IOException e) {
-			throw new ConnectionLostException(e);
-		}
-	}
+    @Override
+    synchronized public void readVisi() throws ConnectionLostException,
+            InterruptedException {
+        checkState();
+        while (rxRemaining_ < 2 && state_ == State.OPEN) {
+            wait();
+        }
+        checkState();
+        rxRemaining_ -= 2;
+        try {
+            ioio_.protocol_.icspRegout();
+        } catch (IOException e) {
+            throw new ConnectionLostException(e);
+        }
+    }
 
-	@Override
-	synchronized public void close() {
-		super.close();
-		ioio_.closeIcsp();
-	}
+    @Override
+    synchronized public void close() {
+        super.close();
+        ioio_.closeIcsp();
+    }
 
-	@Override
-	public synchronized void disconnected() {
-		super.disconnected();
-		notifyAll();
-	}
-	
-	private static int byteToInt(byte b) {
-		return ((int) b) & 0xFF;
-	}
+    @Override
+    public synchronized void disconnected() {
+        super.disconnected();
+        notifyAll();
+    }
 
-	@Override
-	public synchronized int waitVisiResult() throws ConnectionLostException,
-			InterruptedException {
-		checkState();
-		while (resultQueue_.isEmpty() && state_ == State.OPEN) {
-			wait();
-		}
-		checkState();
-		return resultQueue_.remove();
-	}
+    private static int byteToInt(byte b) {
+        return ((int) b) & 0xFF;
+    }
+
+    @Override
+    public synchronized int waitVisiResult() throws ConnectionLostException,
+            InterruptedException {
+        checkState();
+        while (resultQueue_.isEmpty() && state_ == State.OPEN) {
+            wait();
+        }
+        checkState();
+        return resultQueue_.remove();
+    }
 }
