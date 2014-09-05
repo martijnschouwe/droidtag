@@ -18,9 +18,4 @@
         android:layout_height="wrap_content"
         android:layout_width="fill_parent"></Button>
 
-    <Button
-        android:text="Player settings"
-        android:id="@+id/playerSettingsButton"
-        android:layout_height="wrap_content"
-        android:layout_width="fill_parent"></Button>
 </LinearLayout>
