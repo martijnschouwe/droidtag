@@ -1,8 +1,10 @@
 package org.droidtag.activities;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
+import android.view.View;
 
 import org.droidtag.R;
 
@@ -12,6 +14,16 @@ public class Gamestart extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.homescreen);
+    }
+
+    public void gameStartClickListener(View view){
+        Intent i= new Intent(this, LobbyActivity.class);
+        startActivity(i);
+    }
+
+    public void gameJoinClickListener(View view){
+        Intent i= new Intent(this, JoinGameActivity.class);
+        startActivity(i);
     }
 
     @Override

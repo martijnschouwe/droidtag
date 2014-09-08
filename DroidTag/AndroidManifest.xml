@@ -26,6 +26,7 @@
             android:name="org.droidtag.activities.Gamestart"
             android:label="@string/title_activity_gamestart"></activity>
         <activity android:name=".activities.LobbyActivity" />
+        <activity android:name=".activities.JoinGameActivity" />
     </application>
 
 </manifest>

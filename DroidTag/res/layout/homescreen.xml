@@ -10,12 +10,16 @@
         android:layout_height="wrap_content"
         android:text="Start game"
         android:layout_width="fill_parent"
-        android:layout_marginTop="10px"></Button>
+        android:layout_marginTop="10px"
+        android:onClick="gameStartClickListener"
+        ></Button>
 
     <Button
         android:text="Join game"
         android:id="@+id/gameJoinButton"
         android:layout_height="wrap_content"
-        android:layout_width="fill_parent"></Button>
+        android:layout_width="fill_parent"
+        android:onClick="gameJoinClickListener"
+        ></Button>
 
 </LinearLayout>
